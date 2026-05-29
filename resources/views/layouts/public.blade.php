@@ -5,12 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    {{-- SEO Component — each page overrides title/description/etc via @section --}}
+    {{-- SEO Component — pages set @section('seo-title'), ('seo-description'), etc. --}}
+    @php
+        $seoTitle       = trim($__env->yieldContent('seo-title') ?: $__env->yieldContent('title', ''));
+        $seoDescription = trim($__env->yieldContent('seo-description', ''));
+        $seoImage       = trim($__env->yieldContent('seo-image', ''));
+        $seoCanonical   = trim($__env->yieldContent('seo-canonical', ''));
+    @endphp
     <x-seo
-        :title="$__env->yieldContent('seo-title', $__env->yieldContent('title', ''))"
-        :description="$__env->yieldContent('seo-description', '')"
-        :image="$__env->yieldContent('seo-image', '')"
-        :canonical="$__env->yieldContent('seo-canonical', '')"
+        :title="$seoTitle"
+        :description="$seoDescription ?: null"
+        :image="$seoImage ?: null"
+        :canonical="$seoCanonical ?: null"
     />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
