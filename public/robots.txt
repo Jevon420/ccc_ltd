@@ -1,2 +1,29 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /app/
+Disallow: /app/*
+Disallow: /login
+Disallow: /logout
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /storage/
+Disallow: /build/
+
+# Block AI scrapers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+# Sitemap location (update YOUR_DOMAIN to your real domain)
+Sitemap: https://YOUR_DOMAIN/sitemap.xml

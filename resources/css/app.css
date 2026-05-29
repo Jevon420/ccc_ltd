@@ -1,9 +1,58 @@
 @import 'tailwindcss';
+@import 'driver.js/dist/driver.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-brand-700: #1d4ed8;
 }
+
+/* ==========================================================================
+   Driver.js Tour Customisation
+   ========================================================================== */
+.driver-popover {
+    border-radius: 1rem !important;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25) !important;
+}
+.driver-popover-title {
+    font-size: 0.875rem !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+}
+.driver-popover-description {
+    font-size: 0.75rem !important;
+    color: #6b7280 !important;
+}
+.driver-popover-next-btn,
+.driver-popover-done-btn {
+    background-color: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+    border-radius: 0.5rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+.driver-popover-prev-btn {
+    border-radius: 0.5rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+
+/* ==========================================================================
+   Pagination — enterprise style
+   ========================================================================== */
+nav[role="navigation"] a,
+nav[role="navigation"] span {
+    font-size: 0.75rem !important;
+    border-radius: 0.5rem !important;
+}
+
+/* ==========================================================================
+   Custom Scrollbar
+   ========================================================================== */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }

@@ -3,8 +3,9 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | CCC Ops AI Configuration (powered by PrismPHP)
-    | Docs: https://prism.echolabs.dev
+    | CCC Ops AI Configuration
+    | Phase 2: install an AI SDK compatible with Laravel 13
+    | e.g. openai-php/laravel, anthropic-sdk-php, or prism-php/prism (when L13 support lands)
     |
     | IMPORTANT: AI features must ONLY assist users — suggestions, drafts, summaries.
     | AI must NEVER autonomously approve, delete, invoice, mark paid,

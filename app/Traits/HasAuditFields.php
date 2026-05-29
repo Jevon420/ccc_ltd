@@ -18,41 +18,62 @@ trait HasAuditFields
     public static function bootHasAuditFields(): void
     {
         static::creating(function ($model) {
-            if (Auth::check() && $model->isFillable('created_by') && empty($model->created_by)) {
-                $model->created_by = Auth::id();
-            }
-            if (Auth::check() && $model->isFillable('updated_by') && empty($model->updated_by)) {
-                $model->updated_by = Auth::id();
+            if (Auth::check()) {
+                if (empty($model->created_by) && static::auditHasColumn($model, 'created_by')) {
+                    $model->created_by = Auth::id();
+                }
+                if (empty($model->updated_by) && static::auditHasColumn($model, 'updated_by')) {
+                    $model->updated_by = Auth::id();
+                }
             }
         });
 
         static::updating(function ($model) {
-            if (Auth::check() && $model->isFillable('updated_by')) {
+            if (Auth::check() && static::auditHasColumn($model, 'updated_by')) {
                 $model->updated_by = Auth::id();
             }
         });
 
         static::deleted(function ($model) {
-            // Only set deleted_by for soft deletes
+            // Only set deleted_by for soft deletes (not force-deletes)
             if (method_exists($model, 'isForceDeleting') && ! $model->isForceDeleting()) {
-                if (Auth::check() && $model->isFillable('deleted_by')) {
+                if (Auth::check() && static::auditHasColumn($model, 'deleted_by')) {
                     $model->deleted_by = Auth::id();
                     $model->saveQuietly();
                 }
             }
         });
 
-        // Handle restore (if model uses SoftDeletes)
         if (method_exists(static::class, 'restored')) {
             static::restored(function ($model) {
                 if (Auth::check()) {
-                    $model->restored_by = Auth::id();
-                    $model->restored_at = now();
-                    $model->deleted_by  = null;
-                    $model->saveQuietly();
+                    if (static::auditHasColumn($model, 'restored_by')) {
+                        $model->restored_by = Auth::id();
+                        $model->restored_at = now();
+                        $model->deleted_by  = null;
+                        $model->saveQuietly();
+                    }
                 }
             });
         }
+    }
+
+    /**
+     * Check if the model's $fillable or $guarded allows the given column.
+     * We check the actual fillable list OR if the model is unguarded.
+     */
+    protected static function auditHasColumn($model, string $column): bool
+    {
+        // Allow if the column is in fillable
+        if (in_array($column, $model->getFillable())) {
+            return true;
+        }
+        // Allow if model is totally unguarded (guarded = [])
+        if ($model->getGuarded() === []) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

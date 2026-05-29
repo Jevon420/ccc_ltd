@@ -45,6 +45,11 @@ class User extends Authenticatable implements HasMedia
         'remember_token',
     ];
 
+    protected $appends = [
+        'initials',
+        'avatar_url',
+    ];
+
     protected function casts(): array
     {
         return [

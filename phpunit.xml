@@ -32,5 +32,10 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="AI_FEATURES_ENABLED" value="false"/>
+        <env name="FILESYSTEM_DISK" value="local"/>
+        <env name="WASABI_ACCESS_KEY_ID" value="test"/>
+        <env name="WASABI_SECRET_ACCESS_KEY" value="test"/>
+        <env name="WIPAY_ENV" value="sandbox"/>
     </php>
 </phpunit>
