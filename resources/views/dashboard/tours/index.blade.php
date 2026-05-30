@@ -55,19 +55,22 @@ $userProgress = auth()->user()->tourProgress()->with('tour')->get()->keyBy('tour
 @endsection
 
 @push('scripts')
-<script>
-// Tour data for driver.js — populated when a tour is launched
-window.cccTours = @json($tours->map(fn($t) => [
+@php
+$toursJson = json_encode($tours->map(fn($t) => [
     'id'    => $t->id,
     'name'  => $t->name,
     'steps' => $t->steps->map(fn($s) => [
-        'element'     => $s->element,
-        'popover'     => [
+        'element' => $s->element,
+        'popover' => [
             'title'       => $s->title,
             'description' => $s->description,
             'side'        => $s->placement,
         ],
     ])->values(),
 ])->values());
+@endphp
+<script>
+// Tour data for driver.js — populated when a tour is launched
+window.cccTours = {!! $toursJson !!};
 </script>
 @endpush
