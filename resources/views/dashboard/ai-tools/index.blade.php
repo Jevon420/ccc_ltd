@@ -38,26 +38,45 @@
 </div>
 @else
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-    @php
-    $tools = [
-        ['icon' => '📝', 'title' => 'Quote Drafter',     'desc' => 'Generate a professional quote description from job details.', 'badge' => 'Phase 2'],
-        ['icon' => '📊', 'title' => 'Report Summariser',  'desc' => 'Summarise long job reports into concise executive briefs.',   'badge' => 'Phase 2'],
-        ['icon' => '✉️',  'title' => 'Email Drafter',     'desc' => 'Draft professional client emails from simple bullet points.', 'badge' => 'Phase 2'],
-    ];
-    @endphp
-    @foreach($tools as $tool)
+    {{-- Quote Drafter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-        <div class="text-3xl mb-3">{{ $tool['icon'] }}</div>
+        <div class="text-3xl mb-3">📝</div>
         <div class="flex items-start justify-between mb-2">
-            <h3 class="text-sm font-bold text-gray-900">{{ $tool['title'] }}</h3>
-            <span class="text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">{{ $tool['badge'] }}</span>
+            <h3 class="text-sm font-bold text-gray-900">Quote Drafter</h3>
+            <span class="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">Live</span>
         </div>
-        <p class="text-xs text-gray-500 mb-4">{{ $tool['desc'] }}</p>
+        <p class="text-xs text-gray-500 mb-4">Generate a professional quote description from job details using AI.</p>
+        <a href="{{ route('dashboard.quotes.create') }}"
+            class="block w-full text-center text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 py-2 rounded-lg transition-colors">
+            Open Quote Drafter
+        </a>
+    </div>
+
+    {{-- Report Summariser --}}
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+        <div class="text-3xl mb-3">📊</div>
+        <div class="flex items-start justify-between mb-2">
+            <h3 class="text-sm font-bold text-gray-900">Report Summariser</h3>
+            <span class="text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">Coming soon</span>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">Summarise long job reports into concise executive briefs.</p>
         <button disabled class="w-full text-xs font-semibold text-gray-400 border border-gray-200 py-2 rounded-lg cursor-not-allowed">
-            Coming in Phase 2
+            Coming soon
         </button>
     </div>
-    @endforeach
+
+    {{-- Email Drafter --}}
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+        <div class="text-3xl mb-3">✉️</div>
+        <div class="flex items-start justify-between mb-2">
+            <h3 class="text-sm font-bold text-gray-900">Email Drafter</h3>
+            <span class="text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">Coming soon</span>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">Draft professional client emails from simple bullet points.</p>
+        <button disabled class="w-full text-xs font-semibold text-gray-400 border border-gray-200 py-2 rounded-lg cursor-not-allowed">
+            Coming soon
+        </button>
+    </div>
 </div>
 @endif
 
