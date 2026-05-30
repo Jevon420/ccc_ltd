@@ -137,9 +137,7 @@
 {{-- Pass tour data to driver.js --}}
 @php
 $tours = \App\Models\Tour::with('steps')->active()->get();
-@endphp
-<script>
-window.cccTours = @json($tours->map(fn($t) => [
+$toursJson = json_encode($tours->map(fn($t) => [
     'id'    => $t->id,
     'name'  => $t->name,
     'steps' => $t->steps->map(fn($s) => [
@@ -151,5 +149,8 @@ window.cccTours = @json($tours->map(fn($t) => [
         ],
     ])->values(),
 ])->values());
+@endphp
+<script>
+window.cccTours = {!! $toursJson !!};
 </script>
 @endpush
