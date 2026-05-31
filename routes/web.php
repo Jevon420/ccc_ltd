@@ -144,6 +144,13 @@ Route::middleware(['auth'])->prefix('app')->name('dashboard')->group(function ()
         })->name('show');
     });
 
+    // Equipment
+    Route::get('/equipment', function () {
+        abort_unless(auth()->user()->can('equipment.view'), 403);
+
+        return view('dashboard.equipment.index');
+    })->name('.equipment.index');
+
     // Payments
     Route::get('/payments', function () {
         abort_unless(auth()->user()->can('payments.view'), 403);

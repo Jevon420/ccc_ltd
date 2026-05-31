@@ -98,6 +98,30 @@
         </div>
     </div>
 
+    {{-- Photos, Reports, Documents tabs --}}
+    <div x-data="{ tab: 'photos' }" class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="flex border-b border-gray-200">
+            @foreach(['photos' => '📷 Photos', 'reports' => '📋 Reports', 'documents' => '📎 Documents'] as $key => $label)
+            <button @click="tab = '{{ $key }}'"
+                :class="tab === '{{ $key }}' ? 'border-b-2 border-blue-700 text-blue-700 font-semibold' : 'text-gray-500 hover:text-gray-700'"
+                class="px-5 py-3 text-sm transition-colors">
+                {{ $label }}
+            </button>
+            @endforeach
+        </div>
+        <div class="p-5">
+            @can('job_photos.view')
+            <div x-show="tab === 'photos'"><livewire:jobs.job-photos :job="$job" /></div>
+            @endcan
+            @can('job_reports.view')
+            <div x-show="tab === 'reports'"><livewire:jobs.job-reports :job="$job" /></div>
+            @endcan
+            @can('documents.view')
+            <div x-show="tab === 'documents'"><livewire:documents.document-manager :documentable="$job" /></div>
+            @endcan
+        </div>
+    </div>
+
     {{-- Back --}}
     <div>
         <a href="{{ route('dashboard.jobs.index') }}"

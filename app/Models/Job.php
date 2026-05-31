@@ -11,10 +11,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Job extends Model
+class Job extends Model implements HasMedia
 {
-    use HasAuditFields, HasFactory, LogsActivity, SoftDeletes;
+    use HasAuditFields, HasFactory, InteractsWithMedia, LogsActivity, SoftDeletes;
 
     protected $table = 'work_jobs';
 
@@ -87,6 +90,37 @@ class Job extends Model
     public function assignments(): HasMany
     {
         return $this->hasMany(JobAssignment::class);
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(JobReport::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class, 'documentable_id')
+            ->where('documentable_type', self::class);
+    }
+
+    // -------------------------------------------------------------------------
+    // Media Library — Wasabi
+    // -------------------------------------------------------------------------
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('photos')
+            ->useDisk('wasabi')
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(400)
+            ->height(300)
+            ->sharpen(10)
+            ->performOnCollections('photos');
     }
 
     // -------------------------------------------------------------------------
