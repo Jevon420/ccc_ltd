@@ -13,6 +13,11 @@ class InvoiceShow extends Component
 
     public Invoice $invoice;
 
+    public function openRecordPayment(): void
+    {
+        $this->dispatch('open-record-payment', invoiceId: $this->invoice->id);
+    }
+
     public function markSent(): void
     {
         abort_unless(auth()->user()->can('invoices.send'), 403);

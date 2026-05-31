@@ -25,6 +25,20 @@ class UserList extends Component
 
     public bool $showTrashed = false;
 
+    // -------------------------------------------------------------------------
+    // Open form helpers — dispatch events to the embedded UserForm component
+    // -------------------------------------------------------------------------
+
+    public function openCreate(): void
+    {
+        $this->dispatch('open-create-user');
+    }
+
+    public function openEdit(int $userId): void
+    {
+        $this->dispatch('open-edit-user', userId: $userId);
+    }
+
     protected $queryString = [
         'search' => ['except' => ''],
         'roleFilter' => ['except' => ''],

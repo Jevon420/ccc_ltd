@@ -7,17 +7,13 @@ use App\Traits\Livewire\HasToast;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
 
 class UserForm extends Component
 {
     use HasToast;
-
-    protected $listeners = [
-        'open-create' => 'openCreate',
-        'open-edit' => 'openEdit',
-    ];
 
     public ?int $userId = null;
 
@@ -50,6 +46,7 @@ class UserForm extends Component
         ];
     }
 
+    #[On('open-create-user')]
     public function openCreate(): void
     {
         abort_unless(auth()->user()->can('users.create'), 403);
@@ -58,6 +55,7 @@ class UserForm extends Component
         $this->isOpen = true;
     }
 
+    #[On('open-edit-user')]
     public function openEdit(int $userId): void
     {
         abort_unless(auth()->user()->can('users.edit'), 403);

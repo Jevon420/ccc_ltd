@@ -44,6 +44,20 @@ class ServiceTypeList extends Component
         ];
     }
 
+    public function toggleCreateForm(): void
+    {
+        $this->showCreateForm = ! $this->showCreateForm;
+        if (! $this->showCreateForm) {
+            $this->reset(['newName', 'newDescription']);
+        }
+    }
+
+    public function cancelCreate(): void
+    {
+        $this->showCreateForm = false;
+        $this->reset(['newName', 'newDescription']);
+    }
+
     public function create(): void
     {
         abort_unless(auth()->user()->can('service_types.create'), 403);

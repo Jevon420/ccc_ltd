@@ -25,6 +25,16 @@ class InvoiceList extends Component
         'statusFilter' => ['except' => ''],
     ];
 
+    public function openCreate(): void
+    {
+        $this->dispatch('open-create-invoice');
+    }
+
+    public function openEdit(int $invoiceId): void
+    {
+        $this->dispatch('open-edit-invoice', invoiceId: $invoiceId);
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();

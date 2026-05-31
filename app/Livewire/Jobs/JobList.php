@@ -24,6 +24,16 @@ class JobList extends Component
 
     public ?int $confirmingRestoreId = null;
 
+    public function openCreate(): void
+    {
+        $this->dispatch('open-create-job');
+    }
+
+    public function openEdit(int $jobId): void
+    {
+        $this->dispatch('open-edit-job', jobId: $jobId);
+    }
+
     protected $queryString = [
         'search' => ['except' => ''],
         'statusFilter' => ['except' => ''],

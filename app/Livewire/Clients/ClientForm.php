@@ -6,16 +6,12 @@ use App\Models\Client;
 use App\Traits\Livewire\HasToast;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ClientForm extends Component
 {
     use HasToast;
-
-    protected $listeners = [
-        'open-create' => 'openCreate',
-        'open-edit' => 'openEdit',
-    ];
 
     public ?int $clientId = null;
 
@@ -54,6 +50,7 @@ class ClientForm extends Component
         ];
     }
 
+    #[On('open-create-client')]
     public function openCreate(): void
     {
         abort_unless(auth()->user()->can('clients.create'), 403);
@@ -63,6 +60,7 @@ class ClientForm extends Component
         $this->isOpen = true;
     }
 
+    #[On('open-edit-client')]
     public function openEdit(int $clientId): void
     {
         abort_unless(auth()->user()->can('clients.edit'), 403);

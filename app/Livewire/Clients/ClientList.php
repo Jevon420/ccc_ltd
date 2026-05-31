@@ -24,6 +24,16 @@ class ClientList extends Component
 
     public ?int $confirmingRestoreId = null;
 
+    public function openCreate(): void
+    {
+        $this->dispatch('open-create-client');
+    }
+
+    public function openEdit(int $clientId): void
+    {
+        $this->dispatch('open-edit-client', clientId: $clientId);
+    }
+
     protected $queryString = [
         'search' => ['except' => ''],
         'typeFilter' => ['except' => ''],

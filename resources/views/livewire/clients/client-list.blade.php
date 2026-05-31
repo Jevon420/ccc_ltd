@@ -28,7 +28,7 @@
             @endcan
 
             @can('clients.create')
-            <button wire:click="$dispatchTo('clients.client-form', 'open-create')"
+            <button wire:click="openCreate"
                 class="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Add Client
@@ -103,7 +103,7 @@
                                     @endcan
                                 @else
                                     @can('clients.edit')
-                                    <button wire:click="$dispatchTo('clients.client-form', 'open-edit', { clientId: {{ $client->id }} })"
+                                    <button wire:click="openEdit({{ $client->id }})"
                                         class="text-xs font-semibold text-blue-700 hover:text-blue-900 px-2 py-1 rounded hover:bg-blue-50 transition-colors">
                                         Edit
                                     </button>

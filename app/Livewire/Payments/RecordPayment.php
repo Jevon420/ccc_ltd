@@ -7,13 +7,12 @@ use App\Models\Payment;
 use App\Traits\Livewire\HasToast;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class RecordPayment extends Component
 {
     use HasToast;
-
-    protected $listeners = ['open-record-payment' => 'open'];
 
     public bool $isOpen = false;
 
@@ -44,6 +43,7 @@ class RecordPayment extends Component
         ];
     }
 
+    #[On('open-record-payment')]
     public function open(?int $invoiceId = null): void
     {
         abort_unless(auth()->user()->can('payments.create'), 403);

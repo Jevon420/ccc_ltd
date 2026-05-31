@@ -26,6 +26,11 @@ class PaymentList extends Component
         'statusFilter' => ['except' => ''],
     ];
 
+    public function openRecordPayment(): void
+    {
+        $this->dispatch('open-record-payment');
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();

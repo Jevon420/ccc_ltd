@@ -8,16 +8,12 @@ use App\Models\ServiceType;
 use App\Traits\Livewire\HasToast;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class JobForm extends Component
 {
     use HasToast;
-
-    protected $listeners = [
-        'open-create' => 'openCreate',
-        'open-edit' => 'openEdit',
-    ];
 
     public ?int $jobId = null;
 
@@ -59,6 +55,7 @@ class JobForm extends Component
         ];
     }
 
+    #[On('open-create-job')]
     public function openCreate(): void
     {
         abort_unless(auth()->user()->can('jobs.create'), 403);
@@ -68,6 +65,7 @@ class JobForm extends Component
         $this->isOpen = true;
     }
 
+    #[On('open-edit-job')]
     public function openEdit(int $jobId): void
     {
         abort_unless(auth()->user()->can('jobs.edit'), 403);

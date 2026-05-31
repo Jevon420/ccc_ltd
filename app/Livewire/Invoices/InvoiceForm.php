@@ -9,16 +9,12 @@ use App\Models\Quote;
 use App\Traits\Livewire\HasToast;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class InvoiceForm extends Component
 {
     use HasToast;
-
-    protected $listeners = [
-        'open-create' => 'openCreate',
-        'open-edit' => 'openEdit',
-    ];
 
     public ?int $invoiceId = null;
 
@@ -78,6 +74,7 @@ class InvoiceForm extends Component
         }
     }
 
+    #[On('open-create-invoice')]
     public function openCreate(): void
     {
         abort_unless(auth()->user()->can('invoices.create'), 403);
@@ -89,6 +86,7 @@ class InvoiceForm extends Component
         $this->isOpen = true;
     }
 
+    #[On('open-edit-invoice')]
     public function openEdit(int $invoiceId): void
     {
         abort_unless(auth()->user()->can('invoices.edit'), 403);

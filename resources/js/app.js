@@ -4,8 +4,9 @@ import { driver } from 'driver.js';
 // =============================================================================
 // Alpine.js — global reactive UI
 // =============================================================================
+// Make Alpine available globally — Livewire 3 manages Alpine.start() internally.
+// Do NOT call Alpine.start() here; doing so breaks Livewire's $wire magic methods.
 window.Alpine = Alpine;
-Alpine.start();
 
 // =============================================================================
 // CCC Ops — Guided Tour Engine (driver.js)
