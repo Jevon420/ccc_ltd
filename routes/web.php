@@ -8,6 +8,7 @@ use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\SystemHealth\SystemHealthController;
+use App\Models\Job;
 use App\Services\WiPay\WiPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -83,6 +84,28 @@ Route::middleware(['auth'])->prefix('app')->name('dashboard')->group(function ()
     Route::get('/tours', function () {
         return view('dashboard.tours.index');
     })->name('.tours');
+
+    // Jobs
+    Route::prefix('jobs')->name('.jobs.')->group(function () {
+        Route::get('/', function () {
+            abort_unless(auth()->user()->can('jobs.view'), 403);
+
+            return view('dashboard.jobs.index');
+        })->name('index');
+
+        Route::get('/{job}', function (Job $job) {
+            abort_unless(auth()->user()->can('jobs.view'), 403);
+
+            return view('dashboard.jobs.show', compact('job'));
+        })->name('show');
+    });
+
+    // Service Types
+    Route::get('/service-types', function () {
+        abort_unless(auth()->user()->can('service_types.view'), 403);
+
+        return view('dashboard.service-types.index');
+    })->name('.service-types.index');
 
     // Clients
     Route::get('/clients', function () {

@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             SettingsSeeder::class,
             ToursSeeder::class,
+            ServiceTypesSeeder::class,
         ]);
     }
 }
