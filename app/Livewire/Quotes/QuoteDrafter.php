@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Quotes;
 
-use App\Ai\Agents\QuoteDrafter as QuoteDrafterAgent;
+use App\Jobs\GenerateQuoteDraft;
 use App\Models\Client;
 use App\Models\Quote;
 use App\Models\ServiceType;
 use App\Traits\Livewire\HasToast;
-use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Livewire\Attributes\Poll;
 use Livewire\Component;
 
 class QuoteDrafter extends Component
@@ -30,12 +30,12 @@ class QuoteDrafter extends Component
 
     public string $job_details = '';
 
-    // AI output
-    public string $ai_draft = '';
-
+    // State
     public bool $generating = false;
 
     public bool $saved = false;
+
+    public ?int $draftQuoteId = null;  // ID of the saved draft being generated
 
     public ?string $errorMessage = null;
 
@@ -62,42 +62,15 @@ class QuoteDrafter extends Component
 
     public function generate(): void
     {
-        $this->validate();
-        $this->generateDraft();
-    }
-
-    public function generateDraft(): void
-    {
         abort_unless(auth()->user()->can('ai_tools.use'), 403);
-
-        $this->generating = true;
-        $this->errorMessage = null;
-        $this->ai_draft = '';
-
-        try {
-            $prompt = <<<PROMPT
-            Client: {$this->client_name}
-            Service Type: {$this->service_type}
-            Location: {$this->location}
-            Job Details: {$this->job_details}
-            PROMPT;
-
-            $response = (new QuoteDrafterAgent)->prompt($prompt);
-            $this->ai_draft = $response->text;
-        } catch (\Throwable $e) {
-            $this->errorMessage = 'AI draft failed. Please try again or contact support.';
-            Log::error('QuoteDrafter AI error', ['error' => $e->getMessage()]);
-        } finally {
-            $this->generating = false;
-        }
-    }
-
-    public function saveQuote(): void
-    {
         abort_unless(auth()->user()->can('quotes.create'), 403);
 
         $this->validate();
 
+        $this->errorMessage = null;
+        $this->generating = true;
+
+        // Save a draft quote immediately so the job has a record to update
         $quote = Quote::create([
             'client_id' => $this->clientId ?: null,
             'client_name' => $this->client_name,
@@ -107,13 +80,41 @@ class QuoteDrafter extends Component
             'service_type' => $this->service_type,
             'location' => $this->location ?: null,
             'job_details' => $this->job_details,
-            'ai_draft' => $this->ai_draft ?: null,
             'status' => 'draft',
         ]);
 
-        $this->saved = true;
-        $this->reset(['clientId', 'client_name', 'client_email', 'client_phone', 'service_type', 'location', 'job_details', 'ai_draft']);
-        $this->toastSuccess("Quote {$quote->reference} saved as draft.");
+        $this->draftQuoteId = $quote->id;
+
+        $prompt = <<<PROMPT
+        Client: {$this->client_name}
+        Service Type: {$this->service_type}
+        Location: {$this->location}
+        Job Details: {$this->job_details}
+        PROMPT;
+
+        GenerateQuoteDraft::dispatch($quote->id, $prompt);
+
+        $this->toastInfo('Generating AI draft in the background… this takes a few seconds.');
+    }
+
+    /**
+     * Poll every 3 seconds while generating to check if the AI draft is ready.
+     */
+    #[Poll(3000)]
+    public function checkDraft(): void
+    {
+        if (! $this->generating || ! $this->draftQuoteId) {
+            return;
+        }
+
+        $quote = Quote::find($this->draftQuoteId);
+
+        if ($quote && $quote->ai_draft) {
+            $this->generating = false;
+            $this->saved = true;
+            $this->toastSuccess("Quote {$quote->reference} draft ready — view it in Quotes.");
+            $this->reset(['clientId', 'client_name', 'client_email', 'client_phone', 'service_type', 'location', 'job_details', 'draftQuoteId']);
+        }
     }
 
     public function render(): View

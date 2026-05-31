@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\SyncInvoicePaymentStatus;
 use App\Traits\HasAuditFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,37 +45,12 @@ class Payment extends Model
         });
 
         static::saved(function (Payment $payment) {
-            self::syncInvoiceAmountPaid($payment->invoice_id);
+            SyncInvoicePaymentStatus::dispatch($payment->invoice_id);
         });
 
         static::deleted(function (Payment $payment) {
-            self::syncInvoiceAmountPaid($payment->invoice_id);
+            SyncInvoicePaymentStatus::dispatch($payment->invoice_id);
         });
-    }
-
-    protected static function syncInvoiceAmountPaid(int $invoiceId): void
-    {
-        $invoice = Invoice::find($invoiceId);
-        if (! $invoice) {
-            return;
-        }
-
-        $paid = Payment::where('invoice_id', $invoiceId)
-            ->where('status', 'confirmed')
-            ->sum('amount');
-
-        $status = $invoice->status;
-        if ($paid >= $invoice->total) {
-            $status = 'paid';
-        } elseif ($paid > 0) {
-            $status = 'partial';
-        }
-
-        $invoice->updateQuietly([
-            'amount_paid' => $paid,
-            'status' => $status,
-            'paid_date' => $paid >= $invoice->total ? now() : $invoice->paid_date,
-        ]);
     }
 
     // -------------------------------------------------------------------------

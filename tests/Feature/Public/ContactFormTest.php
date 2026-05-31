@@ -77,7 +77,7 @@ class ContactFormTest extends TestCase
             ->set('message', 'Looking for rural road development support in the Sangre Grande area for our agricultural cooperative.')
             ->call('submit');
 
-        Mail::assertSent(ContactRequestReceived::class, function (ContactRequestReceived $mail) {
+        Mail::assertQueued(ContactRequestReceived::class, function (ContactRequestReceived $mail) {
             return $mail->contactRequest->email === 'carlos@example.com';
         });
     }

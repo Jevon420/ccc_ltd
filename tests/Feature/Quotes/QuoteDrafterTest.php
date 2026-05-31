@@ -3,10 +3,13 @@
 namespace Tests\Feature\Quotes;
 
 use App\Ai\Agents\QuoteDrafter as QuoteDrafterAgent;
+use App\Jobs\GenerateQuoteDraft;
 use App\Livewire\Quotes\QuoteDrafter;
+use App\Models\Quote;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -28,10 +31,10 @@ class QuoteDrafterTest extends TestCase
 
     public function test_quote_create_page_loads_for_authorised_user(): void
     {
-        $response = $this->actingAs($this->developer)->get(route('dashboard.quotes.create'));
-
-        $response->assertStatus(200);
-        $response->assertSeeLivewire(QuoteDrafter::class);
+        $this->actingAs($this->developer)
+            ->get(route('dashboard.quotes.create'))
+            ->assertStatus(200)
+            ->assertSeeLivewire(QuoteDrafter::class);
     }
 
     public function test_quote_create_page_forbidden_for_guest(): void
@@ -41,66 +44,77 @@ class QuoteDrafterTest extends TestCase
 
     public function test_generate_validates_required_fields(): void
     {
-        QuoteDrafterAgent::fake(['A professional cleaning quote.']);
+        Queue::fake();
 
         Livewire::actingAs($this->developer)
             ->test(QuoteDrafter::class)
             ->call('generate')
             ->assertHasErrors(['client_name', 'service_type', 'job_details']);
+
+        Queue::assertNothingPushed();
     }
 
-    public function test_generate_calls_ai_agent_and_sets_draft(): void
+    public function test_generate_saves_draft_quote_and_dispatches_job(): void
     {
-        QuoteDrafterAgent::fake(['CCC will provide a thorough deep clean of the premises.']);
+        Queue::fake();
 
-        $component = Livewire::actingAs($this->developer)
+        Livewire::actingAs($this->developer)
             ->test(QuoteDrafter::class)
             ->set('client_name', 'ABC Ltd')
             ->set('service_type', 'Deep Cleaning')
             ->set('location', 'Port of Spain')
             ->set('job_details', 'Full deep clean of 3-storey commercial building including all restrooms and common areas.')
-            ->call('generate');
+            ->call('generate')
+            ->assertSet('generating', true)
+            ->assertHasNoErrors();
 
-        $this->assertNull($component->get('errorMessage'), 'AI error: '.$component->get('errorMessage'));
-        $component->assertSet('ai_draft', 'CCC will provide a thorough deep clean of the premises.')
-            ->assertNoRedirect();
+        // A draft quote should be saved immediately
+        $this->assertDatabaseHas('quotes', [
+            'client_name' => 'ABC Ltd',
+            'service_type' => 'Deep Cleaning',
+            'status' => 'draft',
+        ]);
+
+        // The AI job should be dispatched to the queue
+        Queue::assertPushed(GenerateQuoteDraft::class, function ($job) {
+            return str_contains($job->prompt, 'ABC Ltd');
+        });
     }
 
-    public function test_save_quote_persists_to_database(): void
+    public function test_generate_job_writes_ai_draft_to_quote(): void
     {
-        QuoteDrafterAgent::fake(['Professional quote draft.']);
+        QuoteDrafterAgent::fake(['CCC will provide a thorough deep clean of the premises.']);
 
-        Livewire::actingAs($this->developer)
-            ->test(QuoteDrafter::class)
-            ->set('client_name', 'XYZ Corp')
-            ->set('client_email', 'contact@xyz.com')
-            ->set('service_type', 'Commercial Cleaning')
-            ->set('location', 'San Fernando')
-            ->set('job_details', 'Weekly janitorial service for a 10,000 sq ft office complex.')
-            ->set('ai_draft', 'Professional quote draft.')
-            ->call('saveQuote')
-            ->assertSet('saved', true);
+        $quote = Quote::create([
+            'client_name' => 'ABC Ltd',
+            'service_type' => 'Deep Cleaning',
+            'job_details' => 'Full deep clean',
+            'status' => 'draft',
+        ]);
+
+        // Run the job directly (simulates queue worker processing it)
+        (new GenerateQuoteDraft($quote->id, 'Client: ABC Ltd'))->handle();
 
         $this->assertDatabaseHas('quotes', [
-            'client_name' => 'XYZ Corp',
-            'client_email' => 'contact@xyz.com',
-            'service_type' => 'Commercial Cleaning',
-            'status' => 'draft',
+            'id' => $quote->id,
+            'ai_draft' => 'CCC will provide a thorough deep clean of the premises.',
         ]);
     }
 
-    public function test_save_quote_resets_form_after_save(): void
+    public function test_check_draft_detects_completed_ai_draft(): void
     {
-        QuoteDrafterAgent::fake(['Draft.']);
+        $quote = Quote::create([
+            'client_name' => 'Test Client',
+            'service_type' => 'Commercial Cleaning',
+            'job_details' => 'Office clean weekly',
+            'ai_draft' => 'The AI has generated this draft.',
+            'status' => 'draft',
+        ]);
 
         Livewire::actingAs($this->developer)
-            ->test(QuoteDrafter::class)
-            ->set('client_name', 'Test Client')
-            ->set('service_type', 'Residential Cleaning')
-            ->set('job_details', 'Clean a 4-bedroom house top to bottom including all bathrooms.')
-            ->set('ai_draft', 'Draft.')
-            ->call('saveQuote')
-            ->assertSet('client_name', '')
-            ->assertSet('ai_draft', '');
+            ->test(QuoteDrafter::class, ['generating' => true, 'draftQuoteId' => $quote->id])
+            ->call('checkDraft')
+            ->assertSet('saved', true)
+            ->assertSet('generating', false);
     }
 }

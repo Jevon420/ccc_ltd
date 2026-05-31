@@ -50,7 +50,7 @@ class ContactForm extends Component
 
         $notifyEmail = Setting::get('company_email', config('mail.from.address'));
 
-        Mail::to($notifyEmail)->send(new ContactRequestReceived($contactRequest));
+        Mail::to($notifyEmail)->queue(new ContactRequestReceived($contactRequest));
 
         $this->submitted = true;
         $this->reset(['name', 'email', 'phone', 'service', 'message']);
