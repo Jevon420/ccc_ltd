@@ -20,6 +20,7 @@
     />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 
     {{-- Preconnect for performance --}}
     <link rel="preconnect" href="https://fonts.bunny.net" />
@@ -275,6 +276,15 @@
     </div>
 </footer>
 
+<x-toast />
+@livewireScripts
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('toast', (data) => {
+            window.dispatchEvent(new CustomEvent('toast', { detail: data[0] ?? data }));
+        });
+    });
+</script>
 @stack('scripts')
 </body>
 </html>

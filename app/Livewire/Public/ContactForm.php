@@ -5,11 +5,14 @@ namespace App\Livewire\Public;
 use App\Mail\ContactRequestReceived;
 use App\Models\ContactRequest;
 use App\Models\Setting;
+use App\Traits\Livewire\HasToast;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class ContactForm extends Component
 {
+    use HasToast;
+
     public string $name = '';
 
     public string $email = '';
@@ -51,6 +54,7 @@ class ContactForm extends Component
 
         $this->submitted = true;
         $this->reset(['name', 'email', 'phone', 'service', 'message']);
+        $this->toastSuccess('Your request has been submitted. We\'ll be in touch within 1 business day.');
     }
 
     public function render()
