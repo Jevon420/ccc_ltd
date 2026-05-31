@@ -8,6 +8,7 @@ use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\SystemHealth\SystemHealthController;
+use App\Models\Invoice;
 use App\Models\Job;
 use App\Services\WiPay\WiPayService;
 use Illuminate\Http\Request;
@@ -127,6 +128,28 @@ Route::middleware(['auth'])->prefix('app')->name('dashboard')->group(function ()
         Route::get('/create', [QuoteController::class, 'create'])->name('create');
         Route::get('/{quote}', [QuoteController::class, 'show'])->name('show');
     });
+
+    // Invoices
+    Route::prefix('invoices')->name('.invoices.')->group(function () {
+        Route::get('/', function () {
+            abort_unless(auth()->user()->can('invoices.view'), 403);
+
+            return view('dashboard.invoices.index');
+        })->name('index');
+
+        Route::get('/{invoice}', function (Invoice $invoice) {
+            abort_unless(auth()->user()->can('invoices.view'), 403);
+
+            return view('dashboard.invoices.show', compact('invoice'));
+        })->name('show');
+    });
+
+    // Payments
+    Route::get('/payments', function () {
+        abort_unless(auth()->user()->can('payments.view'), 403);
+
+        return view('dashboard.payments.index');
+    })->name('.payments.index');
 
     /*
     |----------------------------------------------------------------------

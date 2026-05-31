@@ -7,44 +7,56 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Quote extends Model
+class Invoice extends Model
 {
     use HasAuditFields, HasFactory, LogsActivity, SoftDeletes;
 
     protected $fillable = [
         'created_by', 'updated_by', 'deleted_by', 'restored_by', 'restored_at',
-        'reference', 'client_id', 'job_id', 'service_type_id', 'title',
-        'client_name', 'client_email', 'client_phone',
-        'service_type', 'location', 'job_details', 'ai_draft',
-        'status', 'amount', 'valid_until', 'notes',
+        'reference', 'client_id', 'job_id', 'quote_id',
+        'title', 'description',
+        'subtotal', 'tax_rate', 'tax_amount', 'total', 'amount_paid',
+        'status', 'issue_date', 'due_date', 'paid_date', 'notes',
     ];
 
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
-            'valid_until' => 'date',
+            'subtotal' => 'decimal:2',
+            'tax_rate' => 'decimal:2',
+            'tax_amount' => 'decimal:2',
+            'total' => 'decimal:2',
+            'amount_paid' => 'decimal:2',
+            'issue_date' => 'date',
+            'due_date' => 'date',
+            'paid_date' => 'date',
             'restored_at' => 'datetime',
         ];
     }
 
     // -------------------------------------------------------------------------
-    // Boot — auto-generate reference
+    // Boot
     // -------------------------------------------------------------------------
 
     protected static function booted(): void
     {
-        static::creating(function (Quote $quote) {
-            if (empty($quote->reference)) {
-                $quote->reference = 'QUO-'.str_pad(
-                    (Quote::withTrashed()->max('id') ?? 0) + 1,
+        static::creating(function (Invoice $invoice) {
+            if (empty($invoice->reference)) {
+                $invoice->reference = 'INV-'.str_pad(
+                    (Invoice::withTrashed()->max('id') ?? 0) + 1,
                     4, '0', STR_PAD_LEFT
                 );
             }
+        });
+
+        static::saving(function (Invoice $invoice) {
+            $invoice->tax_amount = round($invoice->subtotal * ($invoice->tax_rate / 100), 2);
+            $invoice->total = round($invoice->subtotal + $invoice->tax_amount, 2);
         });
     }
 
@@ -55,10 +67,10 @@ class Quote extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['title', 'status', 'amount', 'client_id'])
+            ->logOnly(['status', 'total', 'amount_paid', 'due_date'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
-            ->setDescriptionForEvent(fn (string $eventName) => "Quote {$eventName}");
+            ->setDescriptionForEvent(fn (string $eventName) => "Invoice {$eventName}");
     }
 
     // -------------------------------------------------------------------------
@@ -75,48 +87,59 @@ class Quote extends Model
         return $this->belongsTo(Job::class);
     }
 
-    public function serviceType(): BelongsTo
+    public function quote(): BelongsTo
     {
-        return $this->belongsTo(ServiceType::class);
+        return $this->belongsTo(Quote::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 
     // -------------------------------------------------------------------------
     // Scopes
     // -------------------------------------------------------------------------
 
-    public function scopeDraft(Builder $query): Builder
+    public function scopeOverdue(Builder $query): Builder
     {
-        return $query->where('status', 'draft');
+        return $query->where('status', '!=', 'paid')
+            ->where('status', '!=', 'cancelled')
+            ->whereNotNull('due_date')
+            ->where('due_date', '<', now());
     }
 
-    public function scopeSent(Builder $query): Builder
+    public function scopeUnpaid(Builder $query): Builder
     {
-        return $query->where('status', 'sent');
-    }
-
-    public function scopeAccepted(Builder $query): Builder
-    {
-        return $query->where('status', 'accepted');
+        return $query->whereNotIn('status', ['paid', 'cancelled']);
     }
 
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 
+    public function getBalanceDueAttribute(): float
+    {
+        return max(0, (float) $this->total - (float) $this->amount_paid);
+    }
+
     public function getStatusColourAttribute(): string
     {
         return match ($this->status) {
             'draft' => 'bg-gray-100 text-gray-600',
             'sent' => 'bg-blue-100 text-blue-700',
-            'accepted' => 'bg-green-100 text-green-700',
-            'declined' => 'bg-red-100 text-red-700',
-            'expired' => 'bg-amber-100 text-amber-700',
+            'partial' => 'bg-amber-100 text-amber-700',
+            'paid' => 'bg-green-100 text-green-700',
+            'overdue' => 'bg-red-100 text-red-700',
+            'cancelled' => 'bg-red-50 text-red-500',
             default => 'bg-gray-100 text-gray-600',
         };
     }
 
-    public function getDisplayClientAttribute(): string
+    public function getIsOverdueAttribute(): bool
     {
-        return $this->client?->name ?? $this->client_name ?? '—';
+        return ! in_array($this->status, ['paid', 'cancelled'])
+            && $this->due_date
+            && $this->due_date->isPast();
     }
 }

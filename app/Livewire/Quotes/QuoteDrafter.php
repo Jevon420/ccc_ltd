@@ -3,13 +3,21 @@
 namespace App\Livewire\Quotes;
 
 use App\Ai\Agents\QuoteDrafter as QuoteDrafterAgent;
+use App\Models\Client;
 use App\Models\Quote;
+use App\Models\ServiceType;
+use App\Traits\Livewire\HasToast;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class QuoteDrafter extends Component
 {
+    use HasToast;
+
     // Form fields
+    public ?int $clientId = null;
+
     public string $client_name = '';
 
     public string $client_email = '';
@@ -41,6 +49,15 @@ class QuoteDrafter extends Component
             'location' => ['nullable', 'string', 'max:500'],
             'job_details' => ['required', 'string', 'min:20'],
         ];
+    }
+
+    public function updatedClientId(?int $value): void
+    {
+        if ($value && $client = Client::find($value)) {
+            $this->client_name = $client->name;
+            $this->client_email = $client->email ?? '';
+            $this->client_phone = $client->phone ?? '';
+        }
     }
 
     public function generate(): void
@@ -81,10 +98,12 @@ class QuoteDrafter extends Component
 
         $this->validate();
 
-        Quote::create([
+        $quote = Quote::create([
+            'client_id' => $this->clientId ?: null,
             'client_name' => $this->client_name,
             'client_email' => $this->client_email ?: null,
             'client_phone' => $this->client_phone ?: null,
+            'title' => "Quote — {$this->client_name} ({$this->service_type})",
             'service_type' => $this->service_type,
             'location' => $this->location ?: null,
             'job_details' => $this->job_details,
@@ -93,11 +112,15 @@ class QuoteDrafter extends Component
         ]);
 
         $this->saved = true;
-        $this->reset(['client_name', 'client_email', 'client_phone', 'service_type', 'location', 'job_details', 'ai_draft']);
+        $this->reset(['clientId', 'client_name', 'client_email', 'client_phone', 'service_type', 'location', 'job_details', 'ai_draft']);
+        $this->toastSuccess("Quote {$quote->reference} saved as draft.");
     }
 
-    public function render()
+    public function render(): View
     {
-        return view('livewire.quotes.quote-drafter');
+        return view('livewire.quotes.quote-drafter', [
+            'clients' => Client::active()->orderBy('name')->get(),
+            'serviceTypes' => ServiceType::active()->orderBy('name')->get(),
+        ]);
     }
 }

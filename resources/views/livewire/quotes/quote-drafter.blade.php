@@ -8,10 +8,27 @@
         <div class="mb-5 flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 text-sm font-medium px-4 py-3 rounded-xl">
             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
             Quote saved as draft.
+            <a href="{{ route('dashboard.quotes.index') }}" class="ml-auto text-xs font-semibold underline">View all quotes</a>
         </div>
         @endif
 
         <form wire:submit="generate" class="space-y-4">
+
+            {{-- Client picker --}}
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Existing Client</label>
+                <select wire:model.live="clientId"
+                    class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select client or fill in manually…</option>
+                    @foreach($clients as $client)
+                    <option value="{{ $client->id }}">{{ $client->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="border-t border-gray-100 pt-4">
+                <p class="text-xs font-semibold text-gray-500 mb-3">Or enter manually:</p>
+            </div>
 
             {{-- Client Name --}}
             <div>
@@ -42,15 +59,9 @@
                 <select wire:model="service_type"
                     class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('service_type') border-red-400 @enderror">
                     <option value="">Select a service…</option>
-                    <option>Commercial Cleaning</option>
-                    <option>Residential Cleaning</option>
-                    <option>Post-Construction Clean</option>
-                    <option>Deep Cleaning</option>
-                    <option>Carpet Cleaning</option>
-                    <option>Window Cleaning</option>
-                    <option>Janitorial Services</option>
-                    <option>One-off Clean</option>
-                    <option>Other</option>
+                    @foreach($serviceTypes as $type)
+                    <option value="{{ $type->name }}">{{ $type->name }}</option>
+                    @endforeach
                 </select>
                 @error('service_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
             </div>
@@ -72,9 +83,7 @@
 
             <button type="submit" wire:loading.attr="disabled"
                 class="w-full flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors disabled:opacity-60">
-                <span wire:loading wire:target="generate">
-                    <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
-                </span>
+                <svg wire:loading wire:target="generate" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
                 <span wire:loading.remove wire:target="generate">✨</span>
                 <span wire:loading wire:target="generate">Drafting…</span>
                 <span wire:loading.remove wire:target="generate">Generate AI Draft</span>
@@ -94,9 +103,7 @@
         </div>
 
         @if($errorMessage)
-        <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">
-            {{ $errorMessage }}
-        </div>
+        <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">{{ $errorMessage }}</div>
         @endif
 
         @if($generating)
@@ -115,7 +122,8 @@
         <div class="mt-4 flex gap-3">
             <button wire:click="saveQuote" wire:loading.attr="disabled"
                 class="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors disabled:opacity-60">
-                Save as Draft Quote
+                <span wire:loading wire:target="saveQuote">Saving…</span>
+                <span wire:loading.remove wire:target="saveQuote">Save as Draft Quote</span>
             </button>
             <button wire:click="generate"
                 class="px-4 py-2.5 text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
