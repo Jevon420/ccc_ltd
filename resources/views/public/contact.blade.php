@@ -66,57 +66,7 @@
             {{-- Contact / Quote Form --}}
             <div class="lg:col-span-2">
                 <h2 class="text-xl font-bold text-gray-900 mb-6">Request a Quote</h2>
-
-                @if(session('quote_sent'))
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                    <p class="text-sm text-green-700 font-medium">✅ Your request has been submitted. We'll be in touch shortly!</p>
-                </div>
-                @endif
-
-                <form method="POST" action="#" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    @csrf
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name *</label>
-                        <input type="text" name="name" required placeholder="John Smith"
-                               class="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address *</label>
-                        <input type="email" name="email" required placeholder="john@company.com"
-                               class="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
-                        <input type="tel" name="phone" placeholder="+1 (868) 000-0000"
-                               class="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Service Needed *</label>
-                        <select name="service" required
-                                class="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                            <option value="">Select a service...</option>
-                            <option>Development Advisory</option>
-                            <option>Rural Development</option>
-                            <option>Debris Cleaning/Removal</option>
-                            <option>Land Maintenance</option>
-                            <option>International Metal Trading</option>
-                            <option>Multiple Services</option>
-                        </select>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Project Details *</label>
-                        <textarea name="message" rows="5" required
-                                  placeholder="Describe your project, location, timeline, and any specific requirements..."
-                                  class="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 resize-none"></textarea>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <button type="submit"
-                                class="w-full sm:w-auto bg-blue-700 hover:bg-blue-800 text-white font-semibold text-sm px-6 py-3 rounded-lg transition-colors">
-                            Send Quote Request
-                        </button>
-                        <p class="text-xs text-gray-400 mt-2">We'll respond within 1 business day. Full online quote flow coming in Phase 2.</p>
-                    </div>
-                </form>
+                <livewire:public.contact-form />
             </div>
         </div>
     </div>
