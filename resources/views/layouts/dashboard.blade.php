@@ -102,14 +102,78 @@
             </x-slot:icon>
         </x-sidebar-link>
 
-        {{-- Divider and Phase 2 placeholder --}}
-        <div x-show="!sidebarCollapsed" class="px-3 pt-4 pb-2">
-            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Modules</p>
+        {{-- Phase 2 Modules --}}
+        <div x-show="!sidebarCollapsed" class="px-3 pt-4 pb-1">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Operations</p>
         </div>
-        <div x-show="!sidebarCollapsed" class="px-3 py-6 text-center">
-            <p class="text-xs text-slate-500">Business modules coming in Phase 2</p>
-            <p class="text-xs text-slate-600 mt-1">Clients · Jobs · Quotes · Invoices</p>
-        </div>
+
+        @can('users.view')
+        <x-sidebar-link route="dashboard.users.index" label="Users" :collapsed="$sidebarCollapsed ?? false">
+            <x-slot:icon>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </x-slot:icon>
+        </x-sidebar-link>
+        @endcan
+
+        @can('clients.view')
+        @if(Route::has('dashboard.clients.index'))
+        <x-sidebar-link route="dashboard.clients.index" label="Clients" :collapsed="$sidebarCollapsed ?? false">
+            <x-slot:icon>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </x-slot:icon>
+        </x-sidebar-link>
+        @endif
+        @endcan
+
+        @can('jobs.view')
+        @if(Route::has('dashboard.jobs.index'))
+        <x-sidebar-link route="dashboard.jobs.index" label="Jobs" :collapsed="$sidebarCollapsed ?? false">
+            <x-slot:icon>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </x-slot:icon>
+        </x-sidebar-link>
+        @endif
+        @endcan
+
+        @can('quotes.view')
+        @if(Route::has('dashboard.quotes.index'))
+        <x-sidebar-link route="dashboard.quotes.index" label="Quotes" :collapsed="$sidebarCollapsed ?? false">
+            <x-slot:icon>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </x-slot:icon>
+        </x-sidebar-link>
+        @endif
+        @endcan
+
+        @can('invoices.view')
+        @if(Route::has('dashboard.invoices.index'))
+        <x-sidebar-link route="dashboard.invoices.index" label="Invoices" :collapsed="$sidebarCollapsed ?? false">
+            <x-slot:icon>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </x-slot:icon>
+        </x-sidebar-link>
+        @endif
+        @endcan
+
+        @can('payments.view')
+        @if(Route::has('dashboard.payments.index'))
+        <x-sidebar-link route="dashboard.payments.index" label="Payments" :collapsed="$sidebarCollapsed ?? false">
+            <x-slot:icon>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </x-slot:icon>
+        </x-sidebar-link>
+        @endif
+        @endcan
+
+        @can('equipment.view')
+        @if(Route::has('dashboard.equipment.index'))
+        <x-sidebar-link route="dashboard.equipment.index" label="Equipment" :collapsed="$sidebarCollapsed ?? false">
+            <x-slot:icon>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </x-slot:icon>
+        </x-sidebar-link>
+        @endif
+        @endcan
     </nav>
 
     {{-- Sidebar Footer --}}
@@ -238,7 +302,16 @@
     </footer>
 </div>
 
+<x-toast />
 @livewireScripts
+<script>
+    // Bridge Livewire toast events to Alpine toast window event
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('toast', (data) => {
+            window.dispatchEvent(new CustomEvent('toast', { detail: data[0] ?? data }));
+        });
+    });
+</script>
 <script>
     // Driver.js guided tour will be initialized here
     // window.cccTourData will be set by the controller
