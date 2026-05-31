@@ -84,6 +84,13 @@ Route::middleware(['auth'])->prefix('app')->name('dashboard')->group(function ()
         return view('dashboard.tours.index');
     })->name('.tours');
 
+    // Clients
+    Route::get('/clients', function () {
+        abort_unless(auth()->user()->can('clients.view'), 403);
+
+        return view('dashboard.clients.index');
+    })->name('.clients.index');
+
     // Users
     Route::get('/users', function () {
         abort_unless(auth()->user()->can('users.view'), 403);
