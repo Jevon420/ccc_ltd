@@ -108,7 +108,7 @@ class ClientForm extends Component
         }
 
         $this->isOpen = false;
-        $this->dispatch('clientSaved');
+        $this->dispatch('client-saved');
     }
 
     public function render(): View

@@ -17,9 +17,9 @@
         </div>
     </div>
 
-    {{-- Generating state (polling) --}}
+    {{-- Generating state — wire:poll checks every 3s if the AI draft is ready --}}
     @elseif($generating)
-    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-10 text-center">
+    <div wire:poll.3000ms="checkDraft" class="bg-white rounded-2xl border border-gray-200 shadow-sm p-10 text-center">
         <svg class="animate-spin w-12 h-12 mx-auto mb-4 text-blue-500" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>

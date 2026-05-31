@@ -26,7 +26,7 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         @foreach($media as $photo)
         <div class="group relative bg-gray-100 rounded-xl overflow-hidden aspect-square">
-            <img src="{{ $photo->getUrl('thumb') }}"
+            <img src="{{ $photo->hasGeneratedConversion('thumb') ? $photo->getUrl('thumb') : $photo->getUrl() }}"
                 alt="{{ $photo->file_name }}"
                 class="w-full h-full object-cover"
                 loading="lazy">

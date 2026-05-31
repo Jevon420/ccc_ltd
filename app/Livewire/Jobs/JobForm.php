@@ -117,7 +117,7 @@ class JobForm extends Component
         }
 
         $this->isOpen = false;
-        $this->dispatch('jobSaved');
+        $this->dispatch('job-saved');
     }
 
     public function render(): View

@@ -8,7 +8,6 @@ use App\Models\Quote;
 use App\Models\ServiceType;
 use App\Traits\Livewire\HasToast;
 use Illuminate\View\View;
-use Livewire\Attributes\Poll;
 use Livewire\Component;
 
 class QuoteDrafter extends Component
@@ -35,7 +34,7 @@ class QuoteDrafter extends Component
 
     public bool $saved = false;
 
-    public ?int $draftQuoteId = null;  // ID of the saved draft being generated
+    public ?int $draftQuoteId = null;
 
     public ?string $errorMessage = null;
 
@@ -70,7 +69,6 @@ class QuoteDrafter extends Component
         $this->errorMessage = null;
         $this->generating = true;
 
-        // Save a draft quote immediately so the job has a record to update
         $quote = Quote::create([
             'client_id' => $this->clientId ?: null,
             'client_name' => $this->client_name,
@@ -98,9 +96,8 @@ class QuoteDrafter extends Component
     }
 
     /**
-     * Poll every 3 seconds while generating to check if the AI draft is ready.
+     * Called by wire:poll in the view every 3 seconds while generating.
      */
-    #[Poll(3000)]
     public function checkDraft(): void
     {
         if (! $this->generating || ! $this->draftQuoteId) {

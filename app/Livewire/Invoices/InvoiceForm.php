@@ -139,7 +139,7 @@ class InvoiceForm extends Component
         }
 
         $this->isOpen = false;
-        $this->dispatch('invoiceSaved');
+        $this->dispatch('invoice-saved');
     }
 
     public function render(): View

@@ -113,7 +113,7 @@ class UserForm extends Component
         }
 
         $this->isOpen = false;
-        $this->dispatch('userSaved');
+        $this->dispatch('user-saved');
     }
 
     public function render(): View

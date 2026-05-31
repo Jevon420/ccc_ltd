@@ -38,7 +38,7 @@ class DocumentManager extends Component
             'title' => ['required', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string', 'max:1000'],
-            'file' => ['required_without:confirmingDeleteId', 'nullable', 'file', 'max:51200',
+            'file' => ['required', 'file', 'max:51200',
                 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png,webp,zip'],
         ];
     }

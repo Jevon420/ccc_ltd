@@ -84,7 +84,7 @@ class RecordPayment extends Component
         $this->isOpen = false;
         $this->reset(['invoiceId', 'amount', 'transactionReference', 'notes']);
         $this->toastSuccess("Payment {$payment->reference} of TTD ".number_format($payment->amount, 2).' recorded.');
-        $this->dispatch('paymentSaved');
+        $this->dispatch('payment-saved');
     }
 
     public function render(): View
