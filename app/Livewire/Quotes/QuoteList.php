@@ -25,6 +25,16 @@ class QuoteList extends Component
         'statusFilter' => ['except' => ''],
     ];
 
+    public function openCreate(): void
+    {
+        $this->dispatch('open-create-quote');
+    }
+
+    public function openEdit(int $quoteId): void
+    {
+        $this->dispatch('open-edit-quote', quoteId: $quoteId);
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();

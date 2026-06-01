@@ -6,12 +6,13 @@ use App\Mail\ContactRequestReceived;
 use App\Models\ContactRequest;
 use App\Models\Setting;
 use App\Traits\Livewire\HasToast;
+use App\Traits\Notifies;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class ContactForm extends Component
 {
-    use HasToast;
+    use HasToast, Notifies;
 
     public string $name = '';
 
@@ -55,6 +56,15 @@ class ContactForm extends Component
         $this->submitted = true;
         $this->reset(['name', 'email', 'phone', 'service', 'message']);
         $this->toastSuccess('Your request has been submitted. We\'ll be in touch within 1 business day.');
+
+        // Notify admin/sales staff in-app
+        $this->notifyUsersWithPermission(
+            'clients.view',
+            "New quote request from {$contactRequest->name} — {$contactRequest->service}.",
+            'info',
+            'View Request',
+            route('dashboard')
+        );
     }
 
     public function render()

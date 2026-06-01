@@ -86,6 +86,20 @@
         </x-sidebar-link>
         @endcan
 
+        {{-- Pulse Monitoring — Developer & Director only --}}
+        @if(auth()->user()->hasRole('Developer') || auth()->user()->hasRole('Director'))
+        @php $pulseUrl = url('/pulse'); @endphp
+        <a href="{{ $pulseUrl }}"
+            class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-sm font-medium group">
+            <span class="w-5 h-5 flex-shrink-0">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </span>
+            @if(!($sidebarCollapsed ?? false))
+            <span>Pulse</span>
+            @endif
+        </a>
+        @endif
+
         {{-- AI Tools --}}
         @can('ai_tools.view')
         <x-sidebar-link route="dashboard.ai-tools" label="AI Tools" :collapsed="$sidebarCollapsed ?? false">
@@ -219,21 +233,11 @@
             <p class="text-xs text-gray-500">@yield('page-subtitle', $companyName)</p>
         </div>
 
-        {{-- Search placeholder --}}
-        <div class="hidden md:flex items-center bg-gray-100 rounded-lg px-3 py-2 gap-2 w-64">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-            <span class="text-xs text-gray-400">Search... (coming soon)</span>
-        </div>
+        {{-- Spacer --}}
+        <div class="flex-1"></div>
 
-        {{-- Notifications --}}
-        <button class="relative text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100" title="Notifications (Phase 2)">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-            </svg>
-            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-        </button>
+        {{-- Notifications Bell --}}
+        <livewire:dashboard.notification-bell />
 
         {{-- Profile Dropdown --}}
         <div x-data="{ open: false }" class="relative">

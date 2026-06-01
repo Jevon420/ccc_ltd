@@ -102,6 +102,10 @@
                                     </button>
                                     @endcan
                                 @else
+                                    <a href="{{ route('dashboard.clients.show', $client) }}"
+                                        class="text-xs font-semibold text-gray-600 hover:text-gray-900 px-2 py-1 rounded hover:bg-gray-100 transition-colors">
+                                        View
+                                    </a>
                                     @can('clients.edit')
                                     <button wire:click="openEdit({{ $client->id }})"
                                         class="text-xs font-semibold text-blue-700 hover:text-blue-900 px-2 py-1 rounded hover:bg-blue-50 transition-colors">

@@ -8,6 +8,7 @@ use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\SystemHealth\SystemHealthController;
+use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Job;
 use App\Services\WiPay\WiPayService;
@@ -48,6 +49,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendPasswordResetLink'])->name('password.email');
+    Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
@@ -109,11 +113,19 @@ Route::middleware(['auth'])->prefix('app')->name('dashboard')->group(function ()
     })->name('.service-types.index');
 
     // Clients
-    Route::get('/clients', function () {
-        abort_unless(auth()->user()->can('clients.view'), 403);
+    Route::prefix('clients')->name('.clients.')->group(function () {
+        Route::get('/', function () {
+            abort_unless(auth()->user()->can('clients.view'), 403);
 
-        return view('dashboard.clients.index');
-    })->name('.clients.index');
+            return view('dashboard.clients.index');
+        })->name('index');
+
+        Route::get('/{client}', function (Client $client) {
+            abort_unless(auth()->user()->can('clients.view'), 403);
+
+            return view('dashboard.clients.show', compact('client'));
+        })->name('show');
+    });
 
     // Users
     Route::get('/users', function () {

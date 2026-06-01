@@ -4,12 +4,13 @@ namespace App\Livewire\Quotes;
 
 use App\Models\Quote;
 use App\Traits\Livewire\HasToast;
+use App\Traits\Notifies;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class QuoteShow extends Component
 {
-    use HasToast;
+    use HasToast, Notifies;
 
     public Quote $quote;
 
@@ -61,6 +62,14 @@ class QuoteShow extends Component
         $this->quote->update(['status' => 'accepted']);
         $this->quote->refresh();
         $this->toastSuccess("Quote {$this->quote->reference} accepted.");
+
+        $this->notifyUsersWithPermission(
+            'quotes.view',
+            "Quote {$this->quote->reference} has been accepted by ".auth()->user()->name.'.',
+            'success',
+            'View Quote',
+            route('dashboard.quotes.show', $this->quote)
+        );
     }
 
     public function decline(): void
@@ -70,6 +79,14 @@ class QuoteShow extends Component
         $this->quote->update(['status' => 'declined']);
         $this->quote->refresh();
         $this->toastWarning("Quote {$this->quote->reference} declined.");
+
+        $this->notifyUsersWithPermission(
+            'quotes.view',
+            "Quote {$this->quote->reference} was declined.",
+            'warning',
+            'View Quote',
+            route('dashboard.quotes.show', $this->quote)
+        );
     }
 
     public function revertToDraft(): void

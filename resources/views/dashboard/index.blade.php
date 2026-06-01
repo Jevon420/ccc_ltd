@@ -92,16 +92,27 @@
         </div>
     </div>
 
-    {{-- Phase 2 Roadmap --}}
-    <div class="bg-gradient-to-br from-blue-700 to-blue-900 rounded-2xl p-5 text-white">
-        <div class="text-2xl mb-3">🚀</div>
-        <p class="text-sm font-bold mb-2">Phase 2 — Coming Next</p>
+    {{-- System Status --}}
+    <div class="bg-gradient-to-br from-slate-900 to-blue-900 rounded-2xl p-5 text-white">
+        <div class="text-2xl mb-3">✅</div>
+        <p class="text-sm font-bold mb-2">All Systems Operational</p>
         <ul class="text-xs text-blue-200 space-y-1.5">
-            @foreach(['Clients', 'Service Types', 'Job Requests', 'Jobs & Work Orders', 'Quotes', 'Invoices', 'Payments (WiPay)', 'Equipment', 'Job Photos'] as $item)
-            <li class="flex items-center gap-2">
-                <div class="w-1 h-1 bg-blue-400 rounded-full flex-shrink-0"></div>
-                {{ $item }}
+            @foreach([
+                ['label' => 'Clients',   'route' => 'dashboard.clients.index'],
+                ['label' => 'Jobs',      'route' => 'dashboard.jobs.index'],
+                ['label' => 'Quotes',    'route' => 'dashboard.quotes.index'],
+                ['label' => 'Invoices',  'route' => 'dashboard.invoices.index'],
+                ['label' => 'Payments',  'route' => 'dashboard.payments.index'],
+                ['label' => 'Equipment', 'route' => 'dashboard.equipment.index'],
+            ] as $link)
+            @if(Route::has($link['route']))
+            <li>
+                <a href="{{ route($link['route']) }}" class="flex items-center gap-2 hover:text-white transition-colors">
+                    <div class="w-1.5 h-1.5 bg-green-400 rounded-full flex-shrink-0"></div>
+                    {{ $link['label'] }}
+                </a>
             </li>
+            @endif
             @endforeach
         </ul>
     </div>

@@ -26,10 +26,14 @@
 
             @can('quotes.create')
             <a href="{{ route('dashboard.quotes.create') }}"
+                class="inline-flex items-center gap-2 border border-blue-700 text-blue-700 hover:bg-blue-50 text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+                ✨ AI Drafter
+            </a>
+            <button wire:click="openCreate"
                 class="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 New Quote
-            </a>
+            </button>
             @endcan
         </div>
     </div>
@@ -85,6 +89,12 @@
                                         class="text-xs font-semibold text-gray-600 hover:text-gray-900 px-2 py-1 rounded hover:bg-gray-100">
                                         View
                                     </a>
+                                    @can('quotes.edit')
+                                    <button wire:click="openEdit({{ $quote->id }})"
+                                        class="text-xs font-semibold text-blue-700 hover:text-blue-900 px-2 py-1 rounded hover:bg-blue-50">
+                                        Edit
+                                    </button>
+                                    @endcan
                                     @can('quotes.delete')
                                     <button wire:click="confirmDelete({{ $quote->id }})"
                                         class="text-xs font-semibold text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-50">
@@ -110,6 +120,8 @@
         <div class="px-5 py-4 border-t border-gray-200">{{ $quotes->links() }}</div>
         @endif
     </div>
+
+    <livewire:quotes.quote-form @quote-saved="$refresh" />
 
     {{-- Delete Confirm --}}
     @if($confirmingDeleteId)

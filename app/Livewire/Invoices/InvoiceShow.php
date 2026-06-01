@@ -4,12 +4,13 @@ namespace App\Livewire\Invoices;
 
 use App\Models\Invoice;
 use App\Traits\Livewire\HasToast;
+use App\Traits\Notifies;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class InvoiceShow extends Component
 {
-    use HasToast;
+    use HasToast, Notifies;
 
     public Invoice $invoice;
 
@@ -37,6 +38,14 @@ class InvoiceShow extends Component
         ]);
         $this->invoice->refresh();
         $this->toastSuccess("Invoice {$this->invoice->reference} marked as paid in full.");
+
+        $this->notifyUsersWithPermission(
+            'invoices.view',
+            "Invoice {$this->invoice->reference} (TTD ".number_format($this->invoice->total, 2).') has been marked as paid.',
+            'success',
+            'View Invoice',
+            route('dashboard.invoices.show', $this->invoice)
+        );
     }
 
     public function cancel(): void
