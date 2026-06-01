@@ -98,10 +98,10 @@
         </div>
     </div>
 
-    {{-- Photos, Reports, Documents tabs --}}
-    <div x-data="{ tab: 'photos' }" class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="flex border-b border-gray-200">
-            @foreach(['photos' => '📷 Photos', 'reports' => '📋 Reports', 'documents' => '📎 Documents'] as $key => $label)
+    {{-- Tabs: Work Orders, Team, Photos, Reports, Documents --}}
+    <div x-data="{ tab: 'workorders' }" class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="flex border-b border-gray-200 overflow-x-auto">
+            @foreach(['workorders' => '✅ Work Orders', 'team' => '👥 Team', 'photos' => '📷 Photos', 'reports' => '📋 Reports', 'documents' => '📎 Documents'] as $key => $label)
             <button @click="tab = '{{ $key }}'"
                 :class="tab === '{{ $key }}' ? 'border-b-2 border-blue-700 text-blue-700 font-semibold' : 'text-gray-500 hover:text-gray-700'"
                 class="px-5 py-3 text-sm transition-colors">
@@ -110,6 +110,12 @@
             @endforeach
         </div>
         <div class="p-5">
+            @can('work_orders.view')
+            <div x-show="tab === 'workorders'"><livewire:jobs.work-orders :job="$job" /></div>
+            @endcan
+            @can('job_assignments.view')
+            <div x-show="tab === 'team'"><livewire:jobs.job-assignments :job="$job" /></div>
+            @endcan
             @can('job_photos.view')
             <div x-show="tab === 'photos'"><livewire:jobs.job-photos :job="$job" /></div>
             @endcan

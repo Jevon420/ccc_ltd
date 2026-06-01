@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
@@ -84,12 +85,19 @@ class Job extends Model implements HasMedia
 
     public function workOrders(): HasMany
     {
-        return $this->hasMany(WorkOrder::class);
+        return $this->hasMany(WorkOrder::class)->orderBy('priority', 'desc')->orderBy('created_at');
     }
 
     public function assignments(): HasMany
     {
         return $this->hasMany(JobAssignment::class);
+    }
+
+    public function assignedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'job_assignments')
+            ->withPivot(['role', 'assigned_date', 'notes'])
+            ->withTimestamps();
     }
 
     public function reports(): HasMany

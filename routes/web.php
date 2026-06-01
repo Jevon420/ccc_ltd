@@ -19,8 +19,6 @@ use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | CCC Ops — Web Routes
-| Phase 1: Public site + Auth + Core Dashboard shell
-| Phase 2: Add clients, jobs, quotes, invoices, payments, equipment…
 |--------------------------------------------------------------------------
 */
 
@@ -170,18 +168,6 @@ Route::middleware(['auth'])->prefix('app')->name('dashboard')->group(function ()
         return view('dashboard.payments.index');
     })->name('.payments.index');
 
-    /*
-    |----------------------------------------------------------------------
-    | Phase 2 stubs — routes added here as modules are built
-    |----------------------------------------------------------------------
-    | Route::prefix('clients')->name('.clients.')-> ...
-    | Route::prefix('jobs')->name('.jobs.')-> ...
-    | Route::prefix('invoices')->name('.invoices.')-> ...
-    | Route::prefix('payments')->name('.payments.')-> ...
-    | Route::prefix('equipment')->name('.equipment.')-> ...
-    | Route::prefix('users')->name('.users.')-> ...
-    | Route::prefix('roles')->name('.roles.')-> ...
-    */
 });
 
 /*
@@ -196,8 +182,8 @@ Route::post('/payments/callback', function (Request $request) {
 
     Log::info('WiPay payment callback', $result);
 
-    // TODO Phase 2: Update invoice/payment record based on $result
-    // Human must confirm before marking invoice paid (do not auto-approve).
+    // TODO: Wire to Payment model once WiPay credentials confirmed.
+    // Human must confirm before marking invoice paid.
 
     return response()->json(['received' => true]);
 })->name('payments.callback');
