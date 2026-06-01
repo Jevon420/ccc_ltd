@@ -5,7 +5,7 @@
         submitMessage() {
             if (!this.inputValue.trim() || this.sending) return;
             this.sending = true;
-            $wire.set('input', this.inputValue);
+            $wire.input = this.inputValue;
             this.inputValue = '';
             $wire.send().then(() => { this.sending = false; });
         }
@@ -91,7 +91,7 @@
 
             {{-- Alpine "Analyzing" indicator — shows instantly when user hits send,
                  before the Livewire round-trip completes and $thinking becomes true --}}
-            <template x-if="sending && !{{ $thinking ? 'true' : 'false' }}">
+            <template x-if="sending && !$wire.thinking">
                 <div class="flex justify-start">
                     <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mr-2 self-end">
                         <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -121,20 +121,20 @@
                     placeholder="Type a message… (Enter to send)"
                     maxlength="500"
                     rows="1"
-                    :disabled="{{ $thinking ? 'true' : 'false' }} || sending"
+                    :disabled="$wire.thinking || sending"
                     x-init="$el.style.height = 'auto'"
                     @input="$el.style.height = 'auto'; $el.style.height = (Math.min($el.scrollHeight, 96)) + 'px'"
-                    x-effect="if (!{{ $thinking ? 'true' : 'false' }} && !sending) $nextTick(() => $el.focus())"
+                    x-effect="if (!$wire.thinking && !sending) $nextTick(() => $el.focus())"
                     class="flex-1 text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none leading-relaxed transition-colors disabled:bg-gray-50 disabled:text-gray-400"
                     style="max-height: 96px; overflow-y: auto;">
                 </textarea>
                 <button type="submit"
-                    :disabled="{{ $thinking ? 'true' : 'false' }} || sending || !inputValue.trim()"
+                    :disabled="$wire.thinking || sending || !inputValue.trim()"
                     class="flex-shrink-0 self-end bg-blue-700 hover:bg-blue-800 text-white p-2.5 rounded-xl transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed">
-                    <svg x-show="!sending && !{{ $thinking ? 'true' : 'false' }}" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg x-show="!sending && !$wire.thinking" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                     </svg>
-                    <svg x-show="sending || {{ $thinking ? 'true' : 'false' }}" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg x-show="sending || $wire.thinking" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                     </svg>

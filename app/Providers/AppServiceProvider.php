@@ -42,8 +42,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Pulse user resolver — show names and roles instead of emails
-        Pulse::users(function (array $ids) {
-            return User::findMany($ids)
+        // Note: $ids may be a Collection or array depending on Pulse version
+        Pulse::users(function (iterable $ids) {
+            return User::findMany(collect($ids)->toArray())
                 ->map(fn (User $user) => [
                     'id' => $user->id,
                     'name' => $user->name,
