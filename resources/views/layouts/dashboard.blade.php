@@ -96,6 +96,7 @@
             </span>
             @if(!($sidebarCollapsed ?? false))
             <span>Pulse</span>
+            <span class="ml-auto text-[10px] text-slate-500 hidden md:inline">desktop</span>
             @endif
         </a>
         @endif
