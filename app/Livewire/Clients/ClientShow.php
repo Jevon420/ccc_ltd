@@ -13,6 +13,11 @@ class ClientShow extends Component
 
     public Client $client;
 
+    public function openEdit(): void
+    {
+        $this->dispatch('open-edit-client', clientId: $this->client->id);
+    }
+
     public function toggleActive(): void
     {
         abort_unless(auth()->user()->can('clients.edit'), 403);

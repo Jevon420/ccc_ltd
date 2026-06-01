@@ -29,7 +29,7 @@
             </div>
             <div class="flex gap-2">
                 @can('clients.edit')
-                <button wire:click="$dispatchTo('clients.client-form', 'open-edit', { clientId: {{ $client->id }} })"
+                <button wire:click="openEdit"
                     class="text-sm font-semibold px-4 py-2 border border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
                     Edit
                 </button>
