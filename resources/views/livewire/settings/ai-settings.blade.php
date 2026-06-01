@@ -133,6 +133,75 @@
         </div>
     </div>
 
+    {{-- Public AI --}}
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+        <div class="flex items-center justify-between mb-1">
+            <h3 class="text-sm font-bold text-gray-900">Public Website AI</h3>
+            <button type="button" wire:click="$toggle('ai_public_enabled')"
+                class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors {{ $ai_public_enabled ? 'bg-blue-600' : 'bg-gray-300' }}">
+                <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 {{ $ai_public_enabled ? 'translate-x-4' : 'translate-x-0' }}"></span>
+            </button>
+        </div>
+        <p class="text-xs text-gray-500 mb-5">AI features visible to public website visitors. Apply aggressive rate limits — these cost real money per visitor.</p>
+
+        @if($ai_public_enabled)
+        <div class="space-y-4">
+
+            {{-- Chatbot --}}
+            <div class="border border-gray-200 rounded-xl p-4 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">🤖 Chatbot Widget</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Floating chat on all public pages. Answers service FAQs, guides to contact form.</p>
+                    </div>
+                    <button type="button" wire:click="$toggle('ai_chatbot_enabled')"
+                        class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors {{ $ai_chatbot_enabled ? 'bg-blue-600' : 'bg-gray-300' }}">
+                        <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 {{ $ai_chatbot_enabled ? 'translate-x-4' : 'translate-x-0' }}"></span>
+                    </button>
+                </div>
+                @if($ai_chatbot_enabled)
+                <div class="space-y-3 pl-3 border-l-2 border-blue-200">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Greeting Message</label>
+                        <input wire:model="ai_chatbot_greeting" type="text" maxlength="300"
+                            class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        @error('ai_chatbot_greeting') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">
+                            Max messages per session <span class="font-normal text-gray-400">(1–20, recommended 8)</span>
+                        </label>
+                        <input wire:model="ai_chatbot_max_messages" type="number" min="1" max="20"
+                            class="w-28 text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        @error('ai_chatbot_max_messages') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                        <strong>Limits enforced:</strong> {{ $ai_chatbot_max_messages }} msgs/session · 20 per IP/day
+                    </p>
+                </div>
+                @endif
+            </div>
+
+            {{-- Contact Assist --}}
+            <div class="border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-gray-900">✍️ Contact Form AI Assist</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Helps visitors describe their project before submitting.</p>
+                    <p class="text-xs text-amber-700 mt-1">Rate limit: 1 use per IP per 30 minutes</p>
+                </div>
+                <button type="button" wire:click="$toggle('ai_contact_assist_enabled')"
+                    class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors {{ $ai_contact_assist_enabled ? 'bg-blue-600' : 'bg-gray-300' }}">
+                    <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 {{ $ai_contact_assist_enabled ? 'translate-x-4' : 'translate-x-0' }}"></span>
+                </button>
+            </div>
+        </div>
+        @else
+        <div class="bg-gray-50 rounded-xl border border-dashed border-gray-300 p-4 text-center text-gray-400">
+            <p class="text-xs">Enable Public AI above to configure chatbot and contact assist.</p>
+        </div>
+        @endif
+    </div>
+
     {{-- Safety Notice --}}
     <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
         <p class="text-xs font-bold text-amber-900 mb-2">⚠️ AI Safety Policy — Always Enforced</p>

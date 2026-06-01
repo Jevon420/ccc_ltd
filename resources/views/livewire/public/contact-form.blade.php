@@ -48,7 +48,12 @@
         </div>
 
         <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Project Details <span class="text-red-500">*</span></label>
+            <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-sm font-medium text-gray-700">Project Details <span class="text-red-500">*</span></label>
+                @if((bool) \App\Models\Setting::get('ai_public_enabled', false) && (bool) \App\Models\Setting::get('ai_contact_assist_enabled', false))
+                <livewire:public.contact-assist @contact-assist-ready="message = $event.description" />
+                @endif
+            </div>
             <textarea wire:model="message" rows="5"
                 placeholder="Describe your project, location, timeline, and any specific requirements…"
                 class="w-full px-3.5 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 resize-none {{ $errors->has('message') ? 'border-red-400' : 'border-gray-300' }}"></textarea>

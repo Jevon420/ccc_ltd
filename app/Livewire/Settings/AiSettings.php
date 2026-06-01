@@ -20,7 +20,7 @@ class AiSettings extends Component
 
     public string $ai_model = 'gpt-4o-mini';
 
-    // Feature toggles
+    // Admin feature toggles
     public bool $ai_quote_drafting = true;
 
     public bool $ai_email_drafting = true;
@@ -28,6 +28,17 @@ class AiSettings extends Component
     public bool $ai_report_summaries = true;
 
     public bool $ai_contact_categorisation = false;
+
+    // Public UI toggles
+    public bool $ai_public_enabled = false;
+
+    public bool $ai_chatbot_enabled = false;
+
+    public string $ai_chatbot_greeting = '';
+
+    public int $ai_chatbot_max_messages = 8;
+
+    public bool $ai_contact_assist_enabled = false;
 
     // Connection test
     public ?string $testResult = null;
@@ -51,6 +62,11 @@ class AiSettings extends Component
             'ai_email_drafting' => ['boolean'],
             'ai_report_summaries' => ['boolean'],
             'ai_contact_categorisation' => ['boolean'],
+            'ai_public_enabled' => ['boolean'],
+            'ai_chatbot_enabled' => ['boolean'],
+            'ai_chatbot_greeting' => ['nullable', 'string', 'max:300'],
+            'ai_chatbot_max_messages' => ['required', 'integer', 'min:1', 'max:20'],
+            'ai_contact_assist_enabled' => ['boolean'],
         ];
     }
 
@@ -63,6 +79,11 @@ class AiSettings extends Component
         $this->ai_email_drafting = (bool) Setting::get('ai_email_drafting', true);
         $this->ai_report_summaries = (bool) Setting::get('ai_report_summaries', true);
         $this->ai_contact_categorisation = (bool) Setting::get('ai_contact_categorisation', false);
+        $this->ai_public_enabled = (bool) Setting::get('ai_public_enabled', false);
+        $this->ai_chatbot_enabled = (bool) Setting::get('ai_chatbot_enabled', false);
+        $this->ai_chatbot_greeting = Setting::get('ai_chatbot_greeting', 'Hi! I\'m the CCC virtual assistant. How can I help you today?');
+        $this->ai_chatbot_max_messages = (int) Setting::get('ai_chatbot_max_messages', 8);
+        $this->ai_contact_assist_enabled = (bool) Setting::get('ai_contact_assist_enabled', false);
     }
 
     public function updatedAiProvider(string $value): void
@@ -101,13 +122,18 @@ class AiSettings extends Component
         $this->validate();
 
         $fields = [
-            'ai_features_enabled' => ['value' => $this->ai_features_enabled,       'type' => 'boolean'],
-            'ai_provider' => ['value' => $this->ai_provider,               'type' => 'string'],
-            'ai_model' => ['value' => $this->ai_model,                  'type' => 'string'],
-            'ai_quote_drafting' => ['value' => $this->ai_quote_drafting,         'type' => 'boolean'],
-            'ai_email_drafting' => ['value' => $this->ai_email_drafting,         'type' => 'boolean'],
-            'ai_report_summaries' => ['value' => $this->ai_report_summaries,       'type' => 'boolean'],
-            'ai_contact_categorisation' => ['value' => $this->ai_contact_categorisation, 'type' => 'boolean'],
+            'ai_features_enabled' => ['value' => $this->ai_features_enabled,        'type' => 'boolean'],
+            'ai_provider' => ['value' => $this->ai_provider,                 'type' => 'string'],
+            'ai_model' => ['value' => $this->ai_model,                    'type' => 'string'],
+            'ai_quote_drafting' => ['value' => $this->ai_quote_drafting,           'type' => 'boolean'],
+            'ai_email_drafting' => ['value' => $this->ai_email_drafting,           'type' => 'boolean'],
+            'ai_report_summaries' => ['value' => $this->ai_report_summaries,         'type' => 'boolean'],
+            'ai_contact_categorisation' => ['value' => $this->ai_contact_categorisation,   'type' => 'boolean'],
+            'ai_public_enabled' => ['value' => $this->ai_public_enabled,           'type' => 'boolean'],
+            'ai_chatbot_enabled' => ['value' => $this->ai_chatbot_enabled,          'type' => 'boolean'],
+            'ai_chatbot_greeting' => ['value' => $this->ai_chatbot_greeting,         'type' => 'string'],
+            'ai_chatbot_max_messages' => ['value' => $this->ai_chatbot_max_messages,     'type' => 'integer'],
+            'ai_contact_assist_enabled' => ['value' => $this->ai_contact_assist_enabled,   'type' => 'boolean'],
         ];
 
         foreach ($fields as $key => $data) {

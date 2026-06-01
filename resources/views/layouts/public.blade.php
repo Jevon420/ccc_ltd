@@ -277,6 +277,13 @@
 </footer>
 
 <x-toast />
+
+{{-- Public AI Chatbot — shown only when enabled in admin settings --}}
+@php $chatbotEnabled = (bool) \App\Models\Setting::get('ai_public_enabled', false) && (bool) \App\Models\Setting::get('ai_chatbot_enabled', false); @endphp
+@if($chatbotEnabled)
+<livewire:public.chatbot />
+@endif
+
 @livewireScripts
 <script>
     document.addEventListener('livewire:init', () => {
